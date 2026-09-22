@@ -1,0 +1,39 @@
+# ── Secrets / env (NEVER commit real keys) ──────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service_role*key*
+
+# ── Dependencies / builds ───────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+build/
+.vercel/
+.turbo/
+
+# ── OS / editor noise ───────────────────────────────────────────────────────
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.swo
+~$*
+
+# ── Freebuff / local tooling state ─────────────────────────────────────────
+.freebuff/
+.freebuff-tmp/
+*.log
+npm-debug.log*
+
+# ── Old unrelated project (has its own repo) ───────────────────────────────
+ROBOCON-SRM-DHANAVNTHSAI/
+
+# ── Vite/React extras ───────────────────────────────────────────────────────
+.eslintcache
+coverage/
+*.tsbuildinfo
+next-env.d.ts.bak
