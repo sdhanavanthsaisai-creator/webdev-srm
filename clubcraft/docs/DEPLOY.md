@@ -7,8 +7,9 @@ everything. `next build` passes locally with zero errors; it will on Vercel too.
 1. GitHub.com → **New repository** → name `clubcraft` → **Create** (keep it empty).
 2. GitHub Desktop → **Repository → Push** → **Repository → Create a repository…** if the
    folder isn't linked yet → publish `webdev-srm` to the new repo.
-3. vercel.com → **Add New… → Project** → **Import** the `clubcraft` repo.
-4. Vercel shows *Next.js* detected → click **Deploy**. First deploy works with NO env
+3. vercel.com → **Add New… → Project** → **Import** the `webdev-srm` (or `clubcraft`) repo.
+4. **Root Directory:** set to `clubcraft` (the Next app is not at the repo root) →
+   Vercel shows *Next.js* detected → click **Deploy**. First deploy works with NO env
    vars (the app runs in demo mode).
 5. **Add secrets** (only once): Project → **Settings → Environment Variables** → add
    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,

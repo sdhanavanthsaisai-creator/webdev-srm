@@ -14,6 +14,11 @@
    - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
    - `anon public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY` (server-only — treat like a root password)
+6. **Authentication → URL configuration** (do this before and after Vercel deploy):
+   - **Site URL:** your Vercel production URL (e.g. `https://clubcraft.vercel.app`) or
+     `http://localhost:3000` while developing locally.
+   - **Redirect URLs:** add `http://localhost:3000/**` and `https://<your-vercel-domain>/**`
+     (wildcard so email links and future OAuth callbacks work).
 
 ## 2. Where the keys go
 - **Locally:** tell your agent: "Create .env.local from .env.example and confirm it's
@@ -21,6 +26,7 @@
 - **Vercel:** dashboard → your project → **Settings → Environment Variables** → add the
   three keys above (+ optional `DEMO_USER_EMAIL` / `DEMO_USER_PASSWORD`) → **Save** →
   **Deployments → ⋯ → Redeploy** (vars only apply to new deployments).
+- **Verify locally:** from `clubcraft/`, run `npm run verify:supabase` (no keys printed).
 
 ## 3. Leak? Do this immediately
 Supabase → **Settings → API → Reset** the leaked key → update `.env.local` and Vercel →
