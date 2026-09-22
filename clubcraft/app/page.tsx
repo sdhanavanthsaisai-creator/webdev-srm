@@ -3,6 +3,19 @@ import Script from "next/script";
 export default function Home() {
   return (
     <>
+      {/* import map: vendored three.js resolves without any network dependency */}
+      <script
+        type="importmap"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            imports: {
+              three: "/vendor/three/three.module.js",
+              "three/addons/": "/vendor/three/addons/",
+            },
+          }),
+        }}
+      />
+
       {/* intro */}
       <div id="intro">
         <div className="i-in">

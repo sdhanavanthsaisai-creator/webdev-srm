@@ -4,6 +4,8 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
+  if (window.__CC_UI__) return;   // init guard: never run twice on one page (dev/Fast-Refresh safety)
+  window.__CC_UI__ = true;
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => [...document.querySelectorAll(s)];
   const pad2 = (n) => String(n).padStart(2, '0');
@@ -68,6 +70,9 @@
   }
 
   const isDemoUser = () => session && session.demo === true;
+  // true only when a REAL Supabase session exists — gates the /api/register round-trip.
+  // Demo sign-ins keep seats as local truth (the API would 503/401 and roll the flip back).
+  const liveAuth = () => Boolean(supabase && session && !isDemoUser());
   const userEmail = () => (session ? session.user && session.user.email : null);
   const userName = () => {
     if (!session) return null;
@@ -273,9 +278,18 @@
   const retrySpec = $('#specRetry');
   if (retrySpec) retrySpec.addEventListener('click', () => toast('Specimen only', 'THE REAL RETRY LIVES ON THE FLOOR.'));
 
-  /* ═════════════════ 6. DETAIL OVERLAY + THE MONEY MOMENT ═════════════════ */
+  /* ---- detail overlay + THE MONEY MOMENT ----
+     regBtn clicks are handled by DELEGATION on #regZone (survives innerHTML
+     rebuilds and duplicate script executions — no per-button rebinding). */
   const detail = $('#detail'), scrim = $('#scrim');
   let lastFocus = null;
+  let currentW = null;   // workshop shown in the detail overlay
+
+  $('#regZone').addEventListener('click', (e) => {
+    if (!e.target.closest || !e.target.closest('#regBtn')) return;
+    if (!currentW) return;
+    requireAuthThen(() => claimSeat(currentW));
+  });
 
   function claimSeat(w) {
     seats.add(w.id); store.set(seats);                                  // flip first — never wait on the network
@@ -285,7 +299,7 @@
     renderReg(w, true);
     toast('Seat claimed', w.title + ' — ' + fmtDay(w.starts_at));
 
-    if (!apiMode) return;                                               // demo: local state is the truth
+    if (!apiMode || !liveAuth()) return;                                // demo: local state is the truth
     fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -306,18 +320,18 @@
   function renderReg(w, fresh) {
     const z = $('#regZone');
     if (seats.has(w.id)) {
-      const seat = (apiMode ? 'SYNCED' : 'LOCAL') + ' · SEAT ' + pad2(seatNo(w.id));
+      const seat = (apiMode && liveAuth() ? 'SYNCED' : 'LOCAL') + ' · SEAT ' + pad2(seatNo(w.id));
       z.innerHTML = '<div class="reg-badge' + (fresh ? ' stamp' : '') + '">' + IC.check + 'Registered</div><p class="sync mono">' + (fresh ? 'SYNCING…' : seat) + '</p>';
       if (fresh) setTimeout(() => { const s = z.querySelector('.sync'); if (s) s.textContent = seat; }, 800);
     } else {
       z.innerHTML = '<button class="btn-p big" id="regBtn">Claim my seat ' + IC.arrow + '</button>';
-      $('#regBtn').addEventListener('click', () => requireAuthThen(() => claimSeat(w)));
     }
   }
 
   function openDetail(i) {
     const w = WORKSHOPS[i];
     if (!w) return;
+    currentW = w;
     $('#dNum').textContent = 'SESSION ' + w.n + ' / ' + pad2(WORKSHOPS.length) + ' · IN ' + daysTo(w.starts_at) + 'D';
     $('#dTitle').textContent = w.title;
     $('#dSpeaker').textContent = w.speaker + ' — ' + w.role;
@@ -401,7 +415,7 @@
   renderWho();
 
   let ready;
-  window.CC.ready = ready = (async () => {
+  ready = (async () => {
     await initSupabase();
     await restoreSession();
     renderWho();

@@ -248,7 +248,7 @@ td.nt { color: var(--dim); font-size: 13.5px; line-height: 1.6; max-width: 30ch;
 .em-bar svg { width: 13px; height: 13px; }
 
 /* ---- detail overlay ---- */
-#scrim { position: fixed; inset: 0; z-index: 50; background: rgba(8, 6, 4, .55); opacity: 0; pointer-events: none; transition: opacity .3s; display: none; }
+#scrim { position: fixed; inset: 0; z-index: 50; background: rgba(8, 6, 4, .55); opacity: 0; pointer-events: none; transition: opacity .3s; }
 #scrim.on { opacity: 1; pointer-events: auto; }
 #detail { position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 100%); z-index: 60; background: #14100a; border-left: 1px solid var(--hair);
   display: flex; flex-direction: column; transform: translateX(103%); transition: transform .3s cubic-bezier(.22, .8, .3, 1); }
@@ -278,11 +278,11 @@ td.nt { color: var(--dim); font-size: 13.5px; line-height: 1.6; max-width: 30ch;
 /* ---- auth modal ---- */
 #authScrim { position: fixed; inset: 0; z-index: 65; background: rgba(8, 6, 4, .6); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity .3s; display: none; }
 #authScrim.on { opacity: 1; pointer-events: auto; }
-#auth { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -46%) scale(.97); opacity: 0; z-index: 70; width: min(420px, calc(100vw - 40px));
+#auth { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -46%) scale(.97); opacity: 0; pointer-events: none; z-index: 70; width: min(420px, calc(100vw - 40px));
   background: rgba(19, 21, 34, .92); border: 1px solid rgba(139, 92, 246, .35); border-radius: 20px; padding: 34px 30px 26px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, .6), 0 0 60px rgba(139, 92, 246, .12);
-  transition: transform .3s cubic-bezier(.22, .8, .3, 1), opacity .3s; display: none; }
-#auth.open { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  transition: transform .3s cubic-bezier(.22, .8, .3, 1), opacity .3s; }
+#auth.open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
 .a-kick { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .a-kick span { font: 500 10px var(--fm); letter-spacing: .26em; color: var(--violet); }
 .a-kick button { background: none; border: 0; color: var(--dim2); cursor: pointer; font-size: 18px; line-height: 1; padding: 4px; }

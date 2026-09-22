@@ -181,13 +181,15 @@ Promise.all([
 ]).catch(() => {}).then(() => panels.forEach((_, i) => applyTex(i)));
 window.addEventListener('cc:seats', (e) => applyTex(e.detail.index));
 
-/* ---- embers: soft round sparks, GPU-drifted, HDR for bloom ---- */
-const EN = 240;
+/* ---- embers: soft round sparks, GPU-drifted, HDR for bloom ----
+   Tuned subtle: the demo hall is bright; oversized/overbright particles wash
+   out the copy and break the 4.5:1 contrast floor. */
+const EN = 140;
 const ePos = new Float32Array(EN * 3), eSeed = new Float32Array(EN), eSize = new Float32Array(EN);
 for (let k = 0; k < EN; k++) {
   const a = Math.random() * Math.PI * 2, r = 2 + Math.random() * 9;
   ePos[k * 3] = Math.cos(a) * r; ePos[k * 3 + 1] = Math.random() * 10; ePos[k * 3 + 2] = Math.sin(a) * r;
-  eSeed[k] = Math.random(); eSize[k] = 9 + Math.random() * 16;
+  eSeed[k] = Math.random(); eSize[k] = 4 + Math.random() * 8;
 }
 const eGeo = new THREE.BufferGeometry();
 eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
@@ -216,7 +218,7 @@ const eMat = new THREE.ShaderMaterial({
       float a = smoothstep(0.5, 0.08, d);
       float fl = 0.5 + 0.5*sin(uTime*(1.5 + vSeed*3.0) + vSeed*50.0);
       vec3 col = mix(vec3(2.1,0.85,0.45), vec3(1.2,0.55,0.30), fract(vSeed*7.0));
-      gl_FragColor = vec4(col*(0.5 + 0.9*fl), a*(0.22 + 0.5*fl));
+      gl_FragColor = vec4(col*(0.30 + 0.55*fl), a*(0.12 + 0.30*fl));
       if (gl_FragColor.a < 0.01) discard;
     }`
 });
@@ -226,7 +228,7 @@ embers.frustumCulled = false; scene.add(embers);
 /* ---- post: bloom only on true HDR (sparks, floor marking) ---- */
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .65, .45, .92);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .34, .5, .9);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
